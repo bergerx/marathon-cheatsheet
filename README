@@ -1,0 +1,41 @@
+Requirements:
+* 3 masters
+* 3 slaves
+* marathon running on masters
+* chronos running on masters
+* haproxy-marathon-bridge on every node
+* $PUBLIC_VPN_IP:$PUBLIC_VPN_PORT routed to any node's 1194
+* every node should have mesos-dns ip address in /etc/resolv.conf
+* docker on every node, DOCKER_OPTS="--insecure-registry docker-registry-infra.marathon.mesos:5000"
+
+Variables:
+  export PUBLIC_VPN_IP=bergerx.ddns.net
+  export PUBLIC_VPN_PORT=443
+  export MESOS_NETWORK=192.168.0.1
+  export MESOS_NETMASK=255.255.255.0
+  export MASTER1_IP=192.168.0.23
+  export SLAVE1_IP=192.168.0.23
+
+
+Services:
+* OK /infra/mesos-dns
+* OK /infra/docker-registry
+* OK /infra/openvpn
+* TODO /infra/prometheus
+* TODO /infra/code/build (gitlab-ci/jenkins)
+* TODO /infra/log/elk (es, kibana, fluentd/logstash)
+* TODO /infra/database/ (sql, nosql, c*, mongo, mysql, postgres)
+* TODO /infra/cache/ (es*, redis)
+
+
+== /infra/mesos-dns ==
+curl -sL -X POST -H 'content-type: application/json' $MASTER1_IP:8080/v2/apps  -d@mesos-dns-marathon.json | jq .
+
+== /infra/docker-registry ==
+curl -sL -X POST -H 'content-type: application/json' leader.mesos:8080/v2/apps -d@docker-registry-aws-marathon.json | jq .
+
+== /infra/openvpn ==
+openvpn/init.sh
+curl -sL -X POST -H 'content-type: application/json' leader.mesos:8080/v2/apps -d@openvpn-marathon.json | jq .
+# now you can use openvpn/mesos.ovpn file to connect your mesos cluster
+

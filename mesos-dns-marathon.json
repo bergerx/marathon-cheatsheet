@@ -1,0 +1,26 @@
+{
+  "cpus": 0.1,
+  "mem": 30,
+  "id": "/infra/mesos-dns",
+  "instances": 1,
+  "constraints": [["hostname", "CLUSTER", "192.168.0.23"]],
+  "env": {
+    "MESOS_DNS_ZK": "zk://192.168.0.23:2181,192.168.0.26:2181,192.168.0.27:2181/mesos",
+    "MESOS_DNS_RESOLVERS": "8.8.8.8",
+    "MESOS_DNS_REFRESHSECONDS": "10",
+    "MESOS_DNS_TTL": "10",
+    "MESOS_DNS_HTTPON": "false"
+  },
+  "container": {
+    "type": "DOCKER",
+    "docker": { "image": "bergerx/mesos-dns" }
+  },
+  "healthChecks": [{
+    "protocol": "COMMAND",
+    "command": { "value": "dig +short leader.mesos @$HOST | grep ." }
+  }],
+  "upgradeStrategy": {
+    "minimumHealthCapacity": 0,
+    "maximumOverCapacity": 0
+  }
+}

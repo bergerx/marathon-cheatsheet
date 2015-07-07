@@ -1,0 +1,16 @@
+{
+  "cpus": 0.1,
+  "mem": 50,
+  "id": "/infra/openvpn",
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "docker-registry-infra.marathon.mesos:5000/openvpn",
+      "network": "BRIDGE",
+      "parameters": [{"key":"cap-add", "value":"NET_ADMIN"}],
+      "portMappings": [{"containerPort": 1194, "servicePort": 1194}]
+    }
+  },
+  "healthChecks": [{"protocol": "TCP"}]
+}

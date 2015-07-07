@@ -1,0 +1,26 @@
+{
+  "cpus": 0.01,
+  "mem": 100,
+  "id": "/infra/docker-registry",
+  "instances": 1,
+  "env": {
+    "REGISTRY_STORAGE": "s3",
+    "REGISTRY_STORAGE_S3_ACCESSKEY": "xxx",
+    "REGISTRY_STORAGE_S3_SECRETKEY": "xxx",
+    "REGISTRY_STORAGE_S3_BUCKET": "bdgn-docker-registry",
+    "REGISTRY_STORAGE_S3_REGION": "us-east-1",
+    "REGISTRY_STORAGE_S3_ROOTDIRECTORY": "registry2"
+  },
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "registry:2",
+      "network": "BRIDGE",
+      "portMappings": [{"containerPort": 5000, "servicePort": 5000}]
+    }
+  },
+  "healthChecks": [{
+    "protocol": "COMMAND",
+    "command": {"value": "curl -f http://$HOST:$PORT0/v2/ | grep '{}'"}
+  }]
+}
